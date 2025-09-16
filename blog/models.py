@@ -15,7 +15,7 @@ class Article(models.Model):
     content = models.TextField()
     created_on = models.DateField(auto_now_add=True)
     modified_on = models.DateField(auto_now=True)
-    author = models.ForeignKey(Author)
+    authors = models.ManyToManyField(Author)
 
     def __str__(self):
         return f"{self.title}\n{self.description}\n\

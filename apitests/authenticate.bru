@@ -1,0 +1,22 @@
+meta {
+  name: authenticate
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:8000/webauth/authenticate
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "username": "",
+    "password": ""
+  }
+}
+
+settings {
+  encodeUrl: true
+}
