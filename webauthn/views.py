@@ -1,37 +1,27 @@
 # -*- coding: utf-8 -*-
 from django.http import HttpResponse
 from rest_framework.views import APIView
-from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
-from django.shortcuts import render
+from json import dumps
 
-from .utils import is_authenticated
+from .utils import is_authenticated, authenticate
 
 class AuthenticateUser(APIView):
     def post(self, request):
         print(request.method)
-        user = authenticate(
-            username=request.data['username'],
-            password=request.data['password'])
+        user = authenticate(request=request)
         if user is None:
             return HttpResponse('Authentication Failed', status=401)
-        login(request, user)
-        return HttpResponse('Success', status=200)
-    
-    def get(self, request):
-        form = AuthenticationForm()
-        return render(request)
+        return HttpResponse(user, status=200)
 
-@login_required
-def create_user(self, request):
-    if request.method == 'POST':
+class CreateUser(APIView):
+    def post(self, request):
         email = request.data['email']
         username = request.data['username']
         password = request.data['password']
         # validate(username, email, password)
         user = User.objects.create_user(username, email, password)
+        if user is None:
+            return HttpResponse('User Creation Failed', status=500)
         return HttpResponse('Success', status=200)
-    elif request.method == 'GET':
-        pass

@@ -1,20 +1,24 @@
 meta {
-  name: Authenticate
+  name: CreateUser
   type: http
-  seq: 1
+  seq: 2
 }
 
 post {
-  url: {{base_addr}}/webauth/authenticate/
+  url: {{base_addr}}/webauth/addUser/
   body: json
   auth: inherit
+}
+
+headers {
+  Content-Type: application/json
 }
 
 body:json {
   {
     "username": "hh",
     "password": "hh",
-    "authtype": "PASSWORD"
+    "email": "hh@gmail.com"
   }
 }
 

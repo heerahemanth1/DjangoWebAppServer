@@ -1,0 +1,9 @@
+# -*- coding: utf-8 -*-
+from enum import Enum
+
+class AuthType(Enum):
+    PASSWORD = 2736472
+    OAUTH = 9237462
+    JWT = 3430424
+    WEBAUTHN = 5632349
+    CERTIFICATE = 3746423
