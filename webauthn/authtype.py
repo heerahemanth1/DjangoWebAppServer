@@ -7,3 +7,4 @@ class AuthType(Enum):
     JWT = 3430424
     WEBAUTHN = 5632349
     CERTIFICATE = 3746423
+

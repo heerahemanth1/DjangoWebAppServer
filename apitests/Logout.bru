@@ -1,0 +1,26 @@
+meta {
+  name: Logout
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{base_addr}}/webauth/logout/
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "username": "hh"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
