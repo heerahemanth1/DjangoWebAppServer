@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 
 from .models import Article
 from .serializers import ArticleSerializer
-from webauthn.utils import is_authenticated
+from webauthn.auth import is_authenticated
 
 class ArticleListView(generics.ListAPIView):
     queryset = Article.objects.all()

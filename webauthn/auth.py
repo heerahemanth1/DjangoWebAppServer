@@ -63,7 +63,7 @@ def open_auth(request):
         # and then generate code
         # and then save the code into the database
         if request.data.get('password'):
-            if user = password_auth(request):
+            if user == password_auth(request):
                 user['authorization_code'] = generate_auth_code(user)
                 return user
         elif request.data.get('session'):
