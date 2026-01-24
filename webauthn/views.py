@@ -1,20 +1,33 @@
 # -*- coding: utf-8 -*-
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.views import APIView
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
+
 from json import dumps
 
-from .utils import is_authenticated, authenticate, user_logout
+from .auth import is_authenticated, authenticate, open_auth,  user_logout
+from .enums import AuthType
 
 class AuthenticateUser(APIView):
     def post(self, request):
-        print(request.method)
+        errors = AuthenticateUser.validate_post_data(request.data)
+        if len(errors) > 0:
+            errstr = '\n'.join(errors)
+            return HttpResponse(f'Invalid Request Data\n{errstr}', status=400)
+
         user = authenticate(request=request)
         if user is None:
             return HttpResponse('Authentication Failed', status=401)
         return HttpResponse(user, status=200)
+
+    @classmethod
+    def validate_post_data(cls, data):
+        errors = []
+        if not data.get('auth_type'):
+            errors.append('Auth Type unspecified')
+        return errors
 
 class CreateUser(APIView):
     def post(self, request):
@@ -30,9 +43,32 @@ class CreateUser(APIView):
 class Authorize(APIView):
     # ToDo: Implement GET method later with UI
     def post(self, request):
-        rtype = request.data.get('response_type')
-        if not rtype:
-            return HttpResponse('Response Type unspecified.', status=400)
+        errors = Authorize.validate_post_data(request.data)
+        if len(errors) > 0:
+            # ToDo: Improve the error response later
+            errstr = '\n'.join(errors)
+            return HttpResponse(f'Invalid Request Data\n{errstr}', status=400)
+
+        user = open_auth(request)
+        if user:
+            return HttpResponse(f'code = {user.get("code")}', status=200)
+        return HttpResponse('Authorization Failed', status=401)
+
+    @classmethod
+    def validate_post_data(cls, data):
+        errors = []
+        print(str(AuthType.OAUTH))
+        if not data.get('auth_type'):
+            errors.append('Auth Type unspecified')
+        elif AuthType[data.get('auth_type')] != AuthType.OAUTH:
+            errors.append('Wrong Auth Type specified')
+        if not data.get('response_type'):
+            errors.append('Response Type unspecified')
+        if not data.get('user_id'):
+            errors.append('User Id unspecified')
+        if not data.get('client_id'):
+            errors.append('Client Id unspecified')
+        return errors
 
 @csrf_exempt
 def logout(request):

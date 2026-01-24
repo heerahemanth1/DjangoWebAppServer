@@ -1,0 +1,27 @@
+meta {
+  name: GetAuhtorizationCode
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{base_addr}}/webauth/authorise/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "auth_type": "OAUTH",
+    "response_type": "code",
+    "user_id": 1,
+    "client_id": "ksdjfhsidufsdsj",
+    "username": "hh",
+    "password": "hh"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

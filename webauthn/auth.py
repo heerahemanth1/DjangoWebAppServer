@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
 from django.contrib.auth import authenticate as django_authenticate
 from django.contrib.auth import login, logout
+from django.db import transaction
 from django.http import HttpResponse
 from functools import wraps
 
-from .authtype import AuthType
+from .enums import AuthType
+from .models import Authorization
 from .utils import generate_auth_code
 
 # ### private objects
@@ -37,7 +40,7 @@ def is_authenticated(func):
 def authenticate(request):
     if request and request.data:
         try:
-            authtype = AuthType[request.data['authtype']]
+            authtype = AuthType[request.data['auth_type']]
             typespecauth = _get_authenticator(authtype)
             user = typespecauth(request)
             if user:
@@ -54,24 +57,34 @@ def password_auth(request):
     return user
 
 def open_auth(request):
+    user = None
     response_type = request.data.get('response_type')
-    response_type = lower(response_type)
+    clientid = request.data.get('client_id')
+    if not clientid:
+        return user
+    response_type = response_type.lower()
     if response_type == "token":
-        pass    # return access token
+        pass    # validate auth code and return access token
     elif response_type == "code":
-        # ToDo: refactor this to authenticate user
-        # and then generate code
-        # and then save the code into the database
         if request.data.get('password'):
-            if user == password_auth(request):
-                user['authorization_code'] = generate_auth_code(user)
-                return user
+            user = password_auth(request)
         elif request.data.get('session'):
             if request.session.get_expiry_age() > 60:
                 user = request.user
-                user['authorization_code'] = generate_auth_code(user)
-                return user
-    return
+
+        if user:
+            code = generate_auth_code(user)
+            with transaction.atomic():
+                new_oauth = Authorization(
+                        user=user,
+                        # ToDo: support client later
+                        auth_code=code,
+                        # ToDo: support permissions later
+                        code_issued_time=datetime.utcnow(),
+                        )
+                new_oauth.save()
+                user['auth_code'] = code
+    return user
 
 def jwt_auth(request):
     pass

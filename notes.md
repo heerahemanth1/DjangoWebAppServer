@@ -13,10 +13,14 @@
     - Resource server requires authorisation proof
     - Client sends auth request to resource owner
     - Client returns an auth grant
-        - credential (usn-pwd / session) (implicit)
-        - code (auth code) (explicit)
+        - credential (usn-pwd / session cookie)
     - Client give the auth grant to auth server
-    - Auth server returns an access token
+    - Auth server provides
+        - either authorization code
+            - in this case, client should exchange
+            the auth code for a token by authenticating
+            itself with the auth server
+        - or access token (implicit)
     - Client sends the token to resource server
     - Res server sends the protected resource
 

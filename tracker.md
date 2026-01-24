@@ -27,4 +27,11 @@ We should be the auth server, not google
 - Define data structure for external clients
     - client id, redirect_uri (unique)
 - Define and manage permissions for oauth tokens
+    - extending django auth permission
+Done: 10-01-26
+
+## Add OAuth endpoints (10-01-26)
+- authorization
+    - response_type: code / token
+- token
 
