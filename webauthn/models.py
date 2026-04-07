@@ -17,12 +17,12 @@ class AuthClient(models.Model):
     password = models.CharField(max_length=128)
 
 class Authorization(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    client = models.ForeignKey(AuthClient, on_delete=models.CASCADE)
-    auth_code = models.CharField(max_length=100, unique=True)
-    access_token = models.CharField(max_length=100, unique=True)
-    refresh_token = models.CharField(max_length=100, unique=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    client = models.ForeignKey(AuthClient, on_delete=models.CASCADE, null=True)
+    auth_code = models.CharField(max_length=100, unique=True, null=True)
+    access_token = models.CharField(max_length=100, unique=True, null=True)
+    refresh_token = models.CharField(max_length=100, unique=True, null=True)
     permissions = models.ManyToManyField(Permission)
-    code_issued_time = models.DateTimeField()
-    token_issued_time = models.DateTimeField()
+    code_issued_time = models.DateTimeField(null=True)
+    token_issued_time = models.DateTimeField(null=True)
 

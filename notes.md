@@ -45,4 +45,5 @@ So, the auth server response types can be token / code
     - Endpoints: authorization, token
         authorization will return a code using a grant type
         token will return a token using auth code
+    - Token gen: include user id, name, scope and validity
 
